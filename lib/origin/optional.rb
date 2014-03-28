@@ -130,9 +130,10 @@ module Origin
     # @since 1.0.0
     def only(*args)
       args = args.flatten
+      fields = (options[:fields] || {}).select{|k,v|v==1}
       option(*args) do |options|
         options.store(
-          :fields, args.inject(options[:fields].select{|k,v|v==1} || {}){ |sub, field| sub.tap { sub[field] = 1 }}
+          :fields, args.inject(fields){ |sub, field| sub.tap { sub[field] = 1 }}
         )
       end
     end
@@ -250,6 +251,7 @@ module Origin
     end
 
     # Limits the results to only contain the fields not provided.
+    # Chainable; overwrites only limitations.
     #
     # @example Limit the results to the fields not provided.
     #   optional.without(:name, :dob)
@@ -261,9 +263,10 @@ module Origin
     # @since 1.0.0
     def without(*args)
       args = args.flatten
+      fields = (options[:fields] || {}).select{|k,v|v==0}
       option(*args) do |options|
         options.store(
-          :fields, args.inject(options[:fields] || {}){ |sub, field| sub.tap { sub[field] = 0 }}
+          :fields, args.inject(fields){ |sub, field| sub.tap { sub[field] = 0 }}
         )
       end
     end
